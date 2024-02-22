@@ -3,6 +3,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Getting Started
 
 ## Instalation
+1. Visual Studio Code https://code.visualstudio.com/ 
+2. Nodejs https://nodejs.org/dist/v20.11.1/node-v20.11.1-x64.msi
+3. Postgresql https://www.postgresql.org/download/
+4. Dbeaver https://dbeaver.io/download/
 
 First, run the development server:
 
