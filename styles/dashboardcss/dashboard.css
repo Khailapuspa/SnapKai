@@ -1,0 +1,160 @@
+.item-foto-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.item-foto {
+    margin: 10px 10px 0 10px; /* Sesuaikan nilai margin atas, kanan, bawah, dan kiri */
+    text-align: left;
+    position: relative;
+}
+
+.item-foto img {
+    height: 200px;
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.item-foto-content {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.item-foto-text {
+    flex: 1;
+    padding-right: 10px; /* Sesuaikan padding sesuai kebutuhan */
+}
+
+.item-foto h6 {
+    margin: 5px 0px;
+}
+
+.item-foto p {
+    margin: 3px 0px; /* Sesuaikan nilai margin atas dan bawah */
+}
+
+.button-like {
+    background-color: transparent !important;
+    color: #ddd5d8 !important;
+    border: none !important;
+    font-size: 1.5em;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: color 0.3s; /* Menambahkan efek transisi pada perubahan warna */
+}
+
+.button-like.liked {
+    color: red !important;
+}
+
+
+.button-create .p-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/* Penambahan gaya tambahan untuk dialog */
+.p-dialog-content .p-inputtext {
+    width: 100%;
+}
+
+
+@media (min-width: 768px) {
+    .card-foto {
+        width: 100%;
+        margin: 10px; /* Sesuaikan sesuai kebutuhan pada layar dengan lebar minimal 768px */
+    }
+}
+
+@media (min-width: 992px) {
+    .card-foto {
+        width: 265px;
+    }
+}
+
+@media (max-width: 767px) {
+    .card-foto {
+        height: auto; /* Gunakan tinggi otomatis agar sesuai dengan konten */
+        padding: 10px; /* Tambahkan padding agar kontennya tetap terlihat baik */
+    }
+
+    .card-img-top {
+        height: 100%; /* Gunakan tinggi 100% agar gambar terisi penuh di kartu */
+    }
+
+    .item-foto {
+        margin: 10px 0; /* Sesuaikan margin untuk versi seluler */
+    }
+}
+
+.card-foto {
+    /* Hapus aturan CSS ini, karena aturan ini tidak diperlukan dan bertentangan */
+    /* width: 220px; */
+    /* margin: 10px; */
+    height: 320px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+
+.like-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px; /* Sesuaikan margin sesuai kebutuhan */
+}
+
+.like-count {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-align: center; /* Sesuaikan sesuai kebutuhan desain Anda */
+    margin-top: 5px; /* Sesuaikan margin sesuai kebutuhan desain Anda */
+}
+
+.like-divider {
+    width: 100%;
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    border-bottom: 0.2 solid #e7e5e5; 
+}
+
+.comment-button {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -50px;
+    background-color: transparent !important;
+    color: #bdb6b9 !important;
+    border: none !important;
+    font-size: 1.7em;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: color 0.3s;
+}

@@ -1,0 +1,58 @@
+.item-album-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.item-album-container p {
+    margin: 5px 0;
+}
+
+.item-album-container h6 {
+    margin-top: 10px;
+}
+
+.item-foto-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.item-foto {
+    margin: 10px 10px 0 10px; /* Sesuaikan nilai margin atas, kanan, bawah, dan kiri */
+    text-align: left;
+}
+
+.item-foto img {
+    height: 200px;
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.item-foto h6 {
+    margin: 5px 0;
+}
+
+.item-foto p {
+    margin: 3px 0; /* Sesuaikan nilai margin atas dan bawah */
+}
+
+.button-create {
+    position: sticky;
+    bottom: 5px;
+    padding: 5px;
+    justify-content: flex-end;
+}
+
+.card {
+    position: relative;
+}
+
+.button-create .p-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/* Penambahan gaya tambahan untuk dialog */
+.p-dialog-content .p-inputtext {
+    width: 100%;
+}

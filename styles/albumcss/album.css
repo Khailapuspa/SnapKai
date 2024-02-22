@@ -1,0 +1,97 @@
+.card-album {
+  display: flex;
+    flex-wrap: wrap;
+    margin-right: 10px;
+    justify-content: space-between;
+    margin: 0 -10px; /* Menambahkan margin negatif untuk mengatasi batas lebar elemen */
+}
+
+.combined-image-card.without-images {
+  background-color: #d3d3d3; /* Warna abu */
+}
+
+.combined-image-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0.1, 0.1, 0.1);
+  overflow: hidden;
+  width: calc(48% - 20px); /* Menghitung lebar dengan margin negatif */
+  margin-bottom: 20px;
+  width: 220px;
+  height: 320px;
+}
+
+.gray-background {
+  background-color: #ddd; /* Ganti dengan warna abu-abu yang diinginkan */
+}
+
+.combined-image {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1px;
+  padding: 1px;
+  margin-top: -1px;
+}
+
+.part {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  /* margin: 1px; */
+  /* border-radius: 10px; */
+}
+
+.part img {
+  width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.part1 {
+  order: 1;
+}
+
+.part2 {
+  order: 2;
+}
+
+.part3 {
+  order: 3;
+}
+
+.part4 {
+  order: 4;
+}
+
+.card-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column; /* Menyusun teks secara vertikal */
+}
+
+.card-content h2 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.card-content p {
+  font-size: 12px;
+  color: #666;
+  margin-top: 0; /* Hilangkan margin atas untuk teks pertama */
+}
+
+.button-create {
+  position: sticky;
+  bottom: 20px;
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.create-button {
+  width: 50px;
+  height: 50px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+

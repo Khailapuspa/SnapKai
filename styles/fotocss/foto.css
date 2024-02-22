@@ -1,0 +1,25 @@
+.button-create {
+    position: sticky;
+    bottom: 20px;
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    justify-content: flex-end;
+    
+  }
+
+  .photos-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .photo-item {
+    margin: 10px;
+    text-align: center;
+  }
+  
+  .photo-item img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+  }
