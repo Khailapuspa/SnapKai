@@ -1,10 +1,10 @@
 'use client';
 
-import "../../../../styles/dashboardcss/dashboard.css";
-import { UnlikeAsync } from "@/app/action/DLike";
-import { useAppDispatch } from "@/app/hooks";
-import { Button } from "primereact/button";
-import { useEffect, useState } from "react";
+import '../../../../styles/dashboardcss/dashboard.css';
+import { UnlikeAsync } from '@/app/action/DLike';
+import { useAppDispatch } from '@/app/hooks';
+import { Button } from 'primereact/button';
+import { useEffect, useState } from 'react';
 
 interface Foto {
     FotoID: number;
@@ -15,77 +15,192 @@ interface Foto {
     LikeID: number; // Add LikeID to identify each like
 }
 
-const LikePage = () => {
-    const dispatch = useAppDispatch();
-    const [vfoto, setVphoto] = useState<Foto[] | undefined>(undefined);
+interface Comment {
+    KomentarID: number;
+    IsiKomentar: string;
+    TanggalKomentar: Date;
+    fotoId: number;
+    userId: number;
+}
 
+interface Likes {
+    LikeID: number;
+    TanggalLike: Date;
+    fotoId: number;
+    userId: number;
+}
+
+const LikePage = () => {
+    const [vfoto, setVphoto] = useState<Foto[]>([]);
+    const [likes, setLikes] = useState<Likes[]>([]);
+    const [likedPhotos, setLikedPhotos] = useState<number[]>([]);
+    const [totalLikes, setTotalLikes] = useState<{ [key: number]: number }>({});
+    const [totalComments, setTotalComments] = useState<{ [key: number]: number }>({});
+    const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
+    const [currentPhotoID, setCurrentPhotoID] = useState<number | null>(null);
+    
     const fetchDataFoto = async () => {
         try {
             const dataloginString = localStorage.getItem('datalogin');
             if (dataloginString) {
                 const datalogin = JSON.parse(dataloginString);
                 const userID = datalogin.id;
-
+                console.log(userID);
+    
                 const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/user/view/likefoto?id=${userID}`);
                 const data = await response.json();
-
+    
                 if (data.success) {
-                    setVphoto(data.data);
+                    setLikes(
+                        data.data
+                    )
+                    likes.forEach( async like => {
+                        const responsefoto = await fetch(`${process.env.NEXT_PUBLIC_URL}/foto/${like.fotoId}`);
+                        const datafoto : Foto = await responsefoto.json();
+
+                        setVphoto([...vfoto, datafoto])
+                    }
+
+                    )
                 } else {
-                    console.error('Failed to fetch photos:', data.Error);
+                    console.error('Failed to fetch liked photos:', data.Error);
                 }
             }
         } catch (error) {
-            console.error('Error fetching photos:', error);
+            console.error('Error fetching liked photos:', error);
+        }
+    };
+    
+    const fetchLikedPhotos = async (userID: number) => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/like-foto/user?id=${userID}`);
+            const data = await response.json();
+
+            if (data.success) {
+                const likedPhotoIDs = data.data;
+                setLikedPhotos(likedPhotoIDs);
+            } else {
+                console.error('Gagal mengambil foto yang disukai:', data.Error);
+            }
+        } catch (error) {
+            console.error('Error mengambil foto yang disukai:', error);
+        }
+    };
+
+    const fetchPhotoLikes = async (FotoID: number) => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/like-foto/photo?photoId=${FotoID}`);
+            const data = await response.json();
+
+            if (data.success) {
+                return data.data; // Return the updated likes data
+            } else {
+                console.error('Failed to fetch photo likes:', data.error);
+                return { likeCount: 0, likedByUsers: [] }; // Return default values
+            }
+        } catch (error) {
+            console.error('Error fetching photo likes:', error);
+            return { likeCount: 0, likedByUsers: [] }; // Return default values
         }
     };
 
     useEffect(() => {
-        fetchDataFoto();
+        fetchDataFoto(); // Mengambil data foto dari server
+        const dataloginString = localStorage.getItem('datalogin');
+        if (dataloginString) {
+            const datalogin = JSON.parse(dataloginString);
+            const userID = datalogin.id;
+            fetchLikedPhotos(userID); // Mengambil data foto yang disukai oleh pengguna
+        }
     }, []);
+    
+    useEffect(() => {
+        console.log(vfoto); // Tambahkan ini untuk melihat data yang diambil dari API
+        likedPhotos.forEach(async (FotoID) => {
+            const updatedLikes = await fetchPhotoLikes(FotoID);
+            setTotalLikes((prevTotalLikes) => ({
+                ...prevTotalLikes,
+                [FotoID]: updatedLikes.likeCount || 0
+            }));
+        });
+    }, [likedPhotos]);
+    
 
-    const HandleUnlike = async (photo: Foto) => {
+    const toggleLike = async (FotoID: number) => {
         const dataloginString = localStorage.getItem('datalogin');
 
         if (dataloginString) {
             const datalogin = JSON.parse(dataloginString);
             const userID = datalogin.id;
 
-            // Dispatch the unlike action
-            dispatch(UnlikeAsync({ LikeID: photo.LikeID }));
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/like/like&unlike`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ FOTOID: FotoID, USERID: userID })
+            });
 
-            // Update local state to remove the liked photo
-            setVphoto((prevPhotos) =>
-                prevPhotos?.filter((prevPhoto) => prevPhoto.FotoID !== photo.FotoID)
-            );
+            const data = await response.json();
+
+            if (data.success) {
+                if (data.message === 'Like') {
+                    setLikedPhotos((prevLikedPhotos) => [...prevLikedPhotos, FotoID]);
+                } else if (data.message === 'Unlike') {
+                    setLikedPhotos((prevLikedPhotos) => prevLikedPhotos.filter((id) => id !== FotoID));
+                }
+                // Now, get the updated totalLikes and totalComments from the server response
+                const updatedLikes = await fetchPhotoLikes(FotoID);
+                // Update totalLikes and totalComments based on FotoID
+                setTotalLikes((prevTotalLikes) => ({
+                    ...prevTotalLikes,
+                    [FotoID]: updatedLikes.likeCount || 0
+                }));
+            } else {
+                console.error('Failed to toggle like:', data.message);
+            }
         }
     };
-    
-    return(
+
+    return (
         <>
             <div className="item-foto-container">
-                {vfoto &&
-                    vfoto.map((photo) => (
-                        <div key={photo.FotoID} className="item-foto">
-                            <img src={photo.LokasiFile} alt={photo.JudulFoto} />
-                            <div className="item-foto-content">
-                                <div className="item-foto-text">
-                                    <h6>
-                                        <b>{photo.JudulFoto}</b>
-                                    </h6>
-                                    <p>{photo.DeskripsiFoto}</p>
-                                </div>
-                                <Button
-                                    icon="pi pi-heart-fill"
-                                    className={`button-like ${photo.LikeID ? '' : 'liked'}`}
-                                    onClick={() => HandleUnlike(photo)}
-                                />
-                            </div>
+            {vfoto.map((photo) => (
+                <div key={photo.FotoID} className="card-foto">
+                    <img src={photo.LokasiFile} alt={photo.JudulFoto} className="card-img-top" />
+                    <div className="item-foto-content">
+                        <div className="item-foto-text">
+                            <h6>
+                                <b>{photo.JudulFoto}</b>
+                            </h6>
+                            <p>{photo.DeskripsiFoto}</p>
                         </div>
-                    ))}
-            </div>
+                        <div className="like-container">
+                            <Button icon="pi pi-heart-fill" className={`button-like ${likedPhotos.includes(photo.FotoID) ? 'liked' : ''}`} onClick={() => toggleLike(photo.FotoID)} />
+                            <span className="like-count" style={{ fontSize: '15px', marginLeft: '5px', marginBottom: '7px' }}>
+                                {totalLikes[photo.FotoID] || 0}
+                            </span>
+                            <hr className="like-divider" />
+                            <Button
+                                icon="pi pi-comment"
+                                className="comment-button"
+                                onClick={() => {
+                                    console.log('Klik ID Foto:', photo.FotoID);
+                                    setCurrentPhotoID(photo.FotoID);
+                                    setIsCommentDialogOpen(true);
+                                }}
+                            >
+                                <span className="like-count" style={{ fontSize: '15px', marginLeft: '5px', marginBottom: '7px' }}>
+                                    {totalComments[photo.FotoID] || 0}
+                                </span>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
         </>
-    )
-}
+    );
+};
 
 export default LikePage;

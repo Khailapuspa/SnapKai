@@ -9,8 +9,7 @@ import { UnlikeAsync } from '../action/DLike';
 import { createKomentarAsync } from '../action/CKomentar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import * as http from 'http';
-import { pipeline } from 'stream';
+import Fuse from 'fuse.js';
 
 interface Foto {
     FotoID: number;
@@ -45,6 +44,12 @@ const Dashboard = () => {
     const [newComment, setNewComment] = useState<string>('');
     const [isCommentDialogOpen, setIsCommentDialogOpen] = useState(false);
     const [currentPhotoID, setCurrentPhotoID] = useState<number | null>(null);
+
+    const [searchKeyword, setSearchKeyword] = useState<string>('');
+    const [searchResults, setSearchResults] = useState<Foto[]>([]);
+    const [isSearching, setIsSearching] = useState<boolean>(false);
+    const [isSearchActive, setIsSearchActive] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const fetchDataFoto = async () => {
         try {
@@ -310,77 +315,107 @@ const Dashboard = () => {
         }
     };
 
-    // const downloadimg = LokasiFile
-    const handleDownload = async (url: string) => {
-        try {
-            const fileName = url.split("/").pop();
-            if (!fileName) {
-              console.error("Failed to extract file name from URL");
-              return;
-            }
-        
-            const response = await fetch(url);
-        
-            if (!response.ok) {
-              throw new Error(`Failed to download file. Status code: ${response.status}`);
-            }
-        
-            const blob = await response.blob();
-        
-            const aTag = document.createElement("a");
-            aTag.href = window.URL.createObjectURL(blob);
-            aTag.setAttribute("download", fileName);
-            document.body.appendChild(aTag);
-            aTag.click();
-            document.body.removeChild(aTag);
-        
-            window.URL.revokeObjectURL(aTag.href);
-          } catch (error) {
-            console.error(`Error downloading file: ${error}`);
-            // Handle error accordingly, e.g., display an error message to the user
-          }
-        
-        // try {
+    // const handleDownload = async (url: string, judulFoto?: string) => {
+    //     try {
+    //         const fileName = judulFoto || url.split('/').pop() || 'downloaded_file';
 
-            
-        //   const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/foto/download/${FotoID}`);
-          
-        //   if (!response.ok) {
-        //     throw new Error(`Gagal mengunduh gambar. Kode status: ${response.status}`);
-        //   }
-      
-        //   const blob = await response.blob();
-        //   const url = window.URL.createObjectURL(blob);
-      
-        //   const a = document.createElement('a');
-        //   a.href = url;
-        //   a.download = 'downloaded_image.jpg'; // Sesuaikan dengan nama file yang diunduh
-        //   document.body.appendChild(a);
-        //   a.click();
-        //   document.body.removeChild(a);
-        //   window.URL.revokeObjectURL(url);
-      
-        // } catch (error) {
-        //   console.error(`Error saat mengunduh gambar: ${error}`);
-        //   // Handle error accordingly
-        // }
-      };
+    //         const response = await fetch(url);
+
+    //         if (!response.ok) {
+    //             throw new Error(`Failed to download file. Status code: ${response.status}`);
+    //         }
+
+    //         const blob = await response.blob();
+
+    //         const aTag = document.createElement('a');
+    //         aTag.href = window.URL.createObjectURL(blob);
+    //         aTag.setAttribute('download', fileName);
+    //         document.body.appendChild(aTag);
+    //         aTag.click();
+    //         document.body.removeChild(aTag);
+
+    //         window.URL.revokeObjectURL(aTag.href);
+    //     } catch (error) {
+    //         console.error(`Error downloading file: ${error}`);
+    //     }
+    // };
+
+    const handleSearch = async () => {
+        try {
+            setIsSearching(true);
+            if (isSearchActive) {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/foto/search?keyword=${searchKeyword}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    setSearchResults(data.datafoto);
+                } else {
+                    console.error('Gagal melakukan pencarian:', data.error);
+                }
+            } else {
+                setSearchKeyword('');
+            }
+        } catch (error) {
+            console.error('Error melakukan pencarian:', error);
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
+    const handleClearSearch = () => {
+        setSearchKeyword('');
+    };
+
+    // const performSearch = (query: string) => {
+    //     const fuse = new Fuse(vfoto, {
+    //         keys: ['JudulFoto', 'DeskripsiFoto']
+    //     });
+
+    //     const result = fuse.search(query);
+    //     setSearchResults(result.map((item) => item.item));
+    // };
+
+    // const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     const query = event.target.value;
+    //     setSearchQuery(query);
+
+    //     if (query.trim() === '') {
+    //         setIsSearching(false);
+    //         setSearchResults([]);
+    //     } else {
+    //         setIsSearching(true);
+    //         performSearch(query);
+    //     }
+    // };
 
     return (
         <>
+            <div className="input-search">
+                <div className="col-12 mb-2 lg:col- lg:mb-0">
+                    <span className="p-input-icon-right">
+                        <InputText type="text" placeholder="Search" value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} onFocus={() => setIsSearchActive(true)} />
+                        {searchKeyword && <i className="pi pi-times-circle clear-icon" onClick={handleClearSearch} />}
+                    </span>
+                    <Button icon="pi pi-search" onClick={handleSearch} className="button-search" />
+                </div>
+            </div>
+
+            {/* <div className="col-12 mb-2 lg:col- lg:mb-0">
+                <span className="p-input-icon-right">
+                    <InputText type="text" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
+                    <i className="pi pi-search" />
+                </span>
+            </div> */}
+
             <div className="item-foto-container">
-            <div className="col-12 mb-2 lg:col-4 lg:mb-0">
-                            <span className="p-input-icon-right">
-                                <InputText type="text" placeholder="Search" />
-                                <i className="pi pi-search" />
-                            </span>
-                        </div>
-                {vfoto &&
-                    vfoto.map((photo) => (
+                {isSearching ? (
+                    <p>Mencari...</p>
+                ) : (
+                    searchResults.map((photo) => (
                         <div key={photo.LikeID} className="card-foto">
                             <div key={photo.FotoID} className="item-foto">
                                 <img src={photo.LokasiFile} alt={photo.JudulFoto} className="card-img-top" />
-                                <Button icon="pi pi-download" className="download-button" style={{ fontSize: '15px', position: 'absolute', top: '10px', right: '10px' }} onClick={() => handleDownload(photo.LokasiFile)} />
+                                {/* Tombol download dan konten foto lainnya */}
                                 <div className="item-foto-content">
                                     <div className="item-foto-text">
                                         <h6>
@@ -406,6 +441,47 @@ const Dashboard = () => {
                                         <span className="like-count" style={{ fontSize: '15px', marginLeft: '5px', marginBottom: '7px' }}>
                                             {totalComments[photo.FotoID] || 0}
                                         </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            <div className="item-foto-container">
+                {vfoto &&
+                    vfoto.map((photo) => (
+                        <div key={photo.LikeID} className="card-foto">
+                            <div key={photo.FotoID} className="item-foto">
+                                <img src={photo.LokasiFile} alt={photo.JudulFoto} className="card-img-top" />
+                                {/* <Button icon="pi pi-download" className="download-button" style={{ fontSize: '15px', position: 'absolute', top: '10px', right: '10px' }} onClick={() => handleDownload(photo.LokasiFile, photo.JudulFoto)} /> */}
+                                <div className="item-foto-content">
+                                    <div className="item-foto-text">
+                                        <h6>
+                                            <b>{photo.JudulFoto}</b>
+                                        </h6>
+                                        <p>{photo.DeskripsiFoto}</p>
+                                    </div>
+                                    <div className="like-container">
+                                        <Button icon="pi pi-heart-fill" className={`button-like ${likedPhotos.includes(photo.FotoID) ? 'liked' : ''}`} onClick={() => toggleLike(photo.FotoID)} />
+                                        <span className="like-count" style={{ fontSize: '15px', marginLeft: '5px', marginBottom: '7px' }}>
+                                            {totalLikes[photo.FotoID] || 0}
+                                        </span>
+                                        <hr className="like-divider" />
+                                        <Button
+                                            icon="pi pi-comment"
+                                            className="comment-button"
+                                            onClick={() => {
+                                                console.log('Klik ID Foto:', photo.FotoID);
+                                                setCurrentPhotoID(photo.FotoID);
+                                                setIsCommentDialogOpen(true);
+                                            }}
+                                        >
+                                            <span className="like-count" style={{ fontSize: '15px', marginLeft: '5px', marginBottom: '7px' }}>
+                                                {totalComments[photo.FotoID] || 0}
+                                            </span>
+                                        </Button>
                                     </div>
                                 </div>
                             </div>

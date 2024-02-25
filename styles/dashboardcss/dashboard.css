@@ -64,14 +64,14 @@
 
 @media (min-width: 768px) {
     .card-foto {
-        width: 100%;
+        width: auto;
         margin: 10px; /* Sesuaikan sesuai kebutuhan pada layar dengan lebar minimal 768px */
     }
 }
 
 @media (min-width: 992px) {
     .card-foto {
-        width: 265px;
+        width: auto;
     }
 }
 
@@ -127,14 +127,14 @@
 .like-container {
     display: flex;
     align-items: center;
-    margin-top: 10px; /* Sesuaikan margin sesuai kebutuhan */
+    margin-top: 10px; 
 }
 
 .like-count {
     font-size: 0.8rem;
     color: #6c757d;
-    text-align: center; /* Sesuaikan sesuai kebutuhan desain Anda */
-    margin-top: 5px; /* Sesuaikan margin sesuai kebutuhan desain Anda */
+    text-align: center; 
+    margin-top: 5px; 
 }
 
 .like-divider {
@@ -170,4 +170,13 @@
     outline: none !important;
     box-shadow: none !important;
     transition: color 0.3s;
+}
+
+.input-search {
+    margin-right: 300px;
+    margin-left: 300px;
+}
+
+.button-search {
+    margin-left: 5px;
 }

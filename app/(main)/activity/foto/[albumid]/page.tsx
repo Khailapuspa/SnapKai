@@ -132,7 +132,7 @@ function FotoPage({ params }: { params: { albumid: number } }) {
                         </div>
                         <div className="field">
                             <label htmlFor="FILE">Foto</label>
-                            <input type="file" id="LOKASIFILE" onChange={handleFileChange} />
+                            <Button><input type="file" id="LOKASIFILE" onChange={handleFileChange} /></Button>
                         </div>
                     </div>
                 </Dialog>
