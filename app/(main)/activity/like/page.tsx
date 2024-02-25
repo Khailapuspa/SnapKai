@@ -41,35 +41,39 @@ const LikePage = () => {
     
     const fetchDataFoto = async () => {
         try {
-            const dataloginString = localStorage.getItem('datalogin');
-            if (dataloginString) {
-                const datalogin = JSON.parse(dataloginString);
-                const userID = datalogin.id;
-                console.log(userID);
-    
-                const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/user/view/likefoto?id=${userID}`);
-                const data = await response.json();
-    
-                if (data.success) {
-                    setLikes(
-                        data.data
-                    )
-                    likes.forEach( async like => {
-                        const responsefoto = await fetch(`${process.env.NEXT_PUBLIC_URL}/foto/${like.fotoId}`);
-                        const datafoto : Foto = await responsefoto.json();
-
-                        setVphoto([...vfoto, datafoto])
-                    }
-
-                    )
-                } else {
-                    console.error('Failed to fetch liked photos:', data.Error);
-                }
+          const dataloginString = localStorage.getItem('datalogin');
+          if (dataloginString) {
+            const datalogin = JSON.parse(dataloginString);
+            const userID = datalogin.id;
+            console.log(userID);
+      
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/user/view/likefoto?id=${userID}`);
+            const data = await response.json();
+      
+            if (data.success) {
+              setLikes(data.data);
+      
+              // Menggunakan map untuk mendapatkan array fotoId dari likedPhotos
+              const likedPhotoIds = data.data.map((like: { fotoId: number }) => like.fotoId);
+      
+              // Fetch data foto berdasarkan array fotoId dengan Promise.all
+              const photoDataPromises = likedPhotoIds.map(async (fotoId: number) => {
+                const responsefoto = await fetch(`${process.env.NEXT_PUBLIC_URL}/foto/${fotoId}`);
+                const datafoto: Foto = await responsefoto.json();
+                return datafoto;
+              });
+      
+              // Menunggu hasil dari seluruh promise dan kemudian memperbarui state vfoto
+              const photosData = await Promise.all(photoDataPromises);
+              setVphoto(photosData);
+            } else {
+              console.error('Failed to fetch liked photos:', data.Error);
             }
+          }
         } catch (error) {
-            console.error('Error fetching liked photos:', error);
+          console.error('Error fetching liked photos:', error);
         }
-    };
+      };
     
     const fetchLikedPhotos = async (userID: number) => {
         try {
