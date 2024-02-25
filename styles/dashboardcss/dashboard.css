@@ -158,3 +158,16 @@
     box-shadow: none !important;
     transition: color 0.3s;
 }
+
+.download-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent !important;
+    color: #a43bc4 !important;
+    border: none !important;
+    font-size: 1.7em;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: color 0.3s;
+}
