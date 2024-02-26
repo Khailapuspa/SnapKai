@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { Navigate } from 'react-router-dom';
 import FotoPage from '@/app/(main)/activity/foto/[albumid]/page';
 import router from 'next/router';
+import { updateAlbumAsync } from '@/app/action/UAlbum';
 
 interface Album {
     AlbumID: number;
@@ -44,6 +45,7 @@ const CombinedImageCard: React.FC<CombinedImageCardProps> = ({ images, namaAlbum
                 <p>
                     <b>{deskripsiAlbum}</b>Tanggal: {formattedDate}
                 </p>
+                <Button icon="pi pi-pencil" className="button-edit"/>
             </div>
         </div>
     );
@@ -57,6 +59,8 @@ const AlbumPage: React.FC = () => {
 
     const [NAMAALBUM, setNAMAALBUM] = useState<string>('');
     const [DESKRIPSI, setDESKRIPSI] = useState<string>('');
+
+    const [updateAlbum, setUpdateAlbum] = useState({ NAMAALBUM: '', DESKRIPSI: ''});
 
     const fetchData = async () => {
         try {
@@ -114,6 +118,29 @@ const AlbumPage: React.FC = () => {
         }
     };
 
+    const Handleupdate = async () => {
+        try {
+            const dataloginString = localStorage.getItem('datalogin');
+            if (dataloginString) {
+                const datalogin = JSON.parse(dataloginString);
+                const userId = datalogin.id; // Ambil USERID dari local storage
+
+                const response = await dispatch(updateAlbumAsync({ NAMAALBUM, DESKRIPSI, USERID: userId }));
+                const newAlbum = response.payload.data;
+
+                // Perubahan di sini
+                setAlbums([...albums, { AlbumID: newAlbum.id, NamaAlbum: NAMAALBUM, Deskripsi: DESKRIPSI, TanggalDibuat: new Date() }]);
+                addSuccessMessage();
+                setDisplayBasic(false);
+            } else {
+                console.error('Data login not found in local storage');
+            }
+        } catch (error) {
+            console.error('Error creating album:', error);
+            addErrorMessage();
+        }
+    }
+
     const basicDialogFooter = <Button type="button" label="Simpan" onClick={Handlecreate} icon="pi pi-check" outlined />;
 
     const addSuccessMessage = () => {
@@ -135,7 +162,7 @@ const AlbumPage: React.FC = () => {
         window.location.href = `/activity/foto/${album.AlbumID}`;
     };
 
-    const images = ['http://100.89.189.35:3001/images/file-1706934850506.jpg', 'http://100.89.189.35:3001/images/file-1706934864891.jpg', 'http://100.89.189.35:3001/images/file-1706934878638.jpg', 'http://100.89.189.35:3001/images/file-1706934886828.jpg'];
+    const images = ['http://127.0.0.1:3001/images/file-1706934850506.jpg', 'http://127.0.0.1:3001/images/file-1706934864891.jpg', 'http://127.0.0.1:3001/images/file-1706934878638.jpg', 'http://127.0.0.1:3001/images/file-1706934886828.jpg'];
 
     return (
         <>
@@ -165,3 +192,5 @@ const AlbumPage: React.FC = () => {
 };
 
 export default AlbumPage;
+
+

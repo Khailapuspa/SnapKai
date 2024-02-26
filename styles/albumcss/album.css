@@ -3,7 +3,7 @@
     flex-wrap: wrap;
     margin-right: 10px;
     justify-content: space-between;
-    margin: 0 -10px; /* Menambahkan margin negatif untuk mengatasi batas lebar elemen */
+    margin: 10px; /* Menambahkan margin negatif untuk mengatasi batas lebar elemen */
 }
 
 .combined-image-card.without-images {
@@ -14,10 +14,13 @@
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0.1, 0.1, 0.1);
   overflow: hidden;
-  width: calc(48% - 20px); /* Menghitung lebar dengan margin negatif */
   margin-bottom: 20px;
-  width: 220px;
+  max-width: 250px; /* Add max-width to limit the width */
   height: 320px;
+}
+
+.combined-image-card:not(:first-child) {
+  margin-right: 20px; /* Additional margin for all albums except the first one */
 }
 
 .gray-background {
@@ -87,6 +90,7 @@
   padding: 15px;
   display: flex;
   justify-content: flex-end;
+  margin-right: 15px; /* Add margin to the right */
 }
 
 .create-button {
@@ -95,3 +99,17 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.button-edit {
+  /* transform: translateX(-50%); */
+  /* background-color: transparent !important; */
+  background-color: #e4e3e3;
+  color: #5e5b5d !important;
+  border-radius: 15px !important;
+  border: none !important;
+  font-size: 1.7em;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: color 0.3s;
+  margin-top: -40px;
+  margin-left: 180px;
+}

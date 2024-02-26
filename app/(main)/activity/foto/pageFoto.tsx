@@ -96,6 +96,7 @@ const FotoPage = () => {
     return(
         <>
             <div className="card">
+            
                 <div className="button-create">
                     <Button icon="pi pi-upload" rounded className="create-button" onClick={() => setDisplayBasic(true)}/>
                 </div>

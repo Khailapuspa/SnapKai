@@ -9,7 +9,6 @@ import { UnlikeAsync } from '../action/DLike';
 import { createKomentarAsync } from '../action/CKomentar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import Fuse from 'fuse.js';
 
 interface Foto {
     FotoID: number;
@@ -315,30 +314,30 @@ const Dashboard = () => {
         }
     };
 
-    // const handleDownload = async (url: string, judulFoto?: string) => {
-    //     try {
-    //         const fileName = judulFoto || url.split('/').pop() || 'downloaded_file';
+    const handleDownload = async (url: string, judulFoto?: string) => {
+        try {
+            const fileName = judulFoto || url.split('/').pop() || 'downloaded_file';
 
-    //         const response = await fetch(url);
+            const response = await fetch(url);
 
-    //         if (!response.ok) {
-    //             throw new Error(`Failed to download file. Status code: ${response.status}`);
-    //         }
+            if (!response.ok) {
+                throw new Error(`Failed to download file. Status code: ${response.status}`);
+            }
 
-    //         const blob = await response.blob();
+            const blob = await response.blob();
 
-    //         const aTag = document.createElement('a');
-    //         aTag.href = window.URL.createObjectURL(blob);
-    //         aTag.setAttribute('download', fileName);
-    //         document.body.appendChild(aTag);
-    //         aTag.click();
-    //         document.body.removeChild(aTag);
+            const aTag = document.createElement('a');
+            aTag.href = window.URL.createObjectURL(blob);
+            aTag.setAttribute('download', fileName);
+            document.body.appendChild(aTag);
+            aTag.click();
+            document.body.removeChild(aTag);
 
-    //         window.URL.revokeObjectURL(aTag.href);
-    //     } catch (error) {
-    //         console.error(`Error downloading file: ${error}`);
-    //     }
-    // };
+            window.URL.revokeObjectURL(aTag.href);
+        } catch (error) {
+            console.error(`Error downloading file: ${error}`);
+        }
+    };
 
     const handleSearch = async () => {
         try {
@@ -455,7 +454,7 @@ const Dashboard = () => {
                         <div key={photo.LikeID} className="card-foto">
                             <div key={photo.FotoID} className="item-foto">
                                 <img src={photo.LokasiFile} alt={photo.JudulFoto} className="card-img-top" />
-                                {/* <Button icon="pi pi-download" className="download-button" style={{ fontSize: '15px', position: 'absolute', top: '10px', right: '10px' }} onClick={() => handleDownload(photo.LokasiFile, photo.JudulFoto)} /> */}
+                                <Button icon="pi pi-download" className="download-button" style={{ fontSize: '15px', position: 'absolute', top: '10px', right: '10px' }} onClick={() => handleDownload(photo.LokasiFile, photo.JudulFoto)} />
                                 <div className="item-foto-content">
                                     <div className="item-foto-text">
                                         <h6>

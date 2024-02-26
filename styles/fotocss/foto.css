@@ -23,3 +23,18 @@
     max-height: 200px;
     object-fit: cover;
   }
+
+  .button-edit {
+    /* transform: translateX(-50%); */
+    /* background-color: transparent !important; */
+    background-color: #e4e3e3;
+    color: #5e5b5d !important;
+    border-radius: 15px !important;
+    border: none !important;
+    font-size: 1.7em;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: color 0.3s;
+    margin-top: -40px;
+    margin-left: 180px;
+  }

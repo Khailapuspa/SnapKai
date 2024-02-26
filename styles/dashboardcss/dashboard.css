@@ -65,25 +65,30 @@
 @media (min-width: 768px) {
     .card-foto {
         width: auto;
-        margin: 10px; /* Sesuaikan sesuai kebutuhan pada layar dengan lebar minimal 768px */
+        margin: 10px;
     }
 }
 
 @media (min-width: 992px) {
     .card-foto {
-        width: auto;
+        width: 260px;
     }
 }
 
 @media (max-width: 767px) {
     .card-foto {
-        height: auto; /* Gunakan tinggi otomatis agar sesuai dengan konten */
-        padding: 10px; /* Tambahkan padding agar kontennya tetap terlihat baik */
+        height: auto;
+        padding: 10px;
     }
 
     .card-img-top {
-        height: 100%; /* Gunakan tinggi 100% agar gambar terisi penuh di kartu */
+        height: 100%;
     }
+
+    .item-foto {
+        margin: 10px 0;
+    }
+
 
     .item-foto {
         margin: 10px 0; /* Sesuaikan margin untuk versi seluler */
@@ -173,10 +178,12 @@
 }
 
 .input-search {
-    margin-right: 300px;
-    margin-left: 300px;
+    margin: 0 auto;
+    text-align: center;
+    max-width: 400px; /* Set a maximum width for the search input container */
 }
 
 .button-search {
     margin-left: 5px;
+    vertical-align: middle; /* Align the search button vertically with the input */
 }
