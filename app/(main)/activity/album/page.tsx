@@ -162,7 +162,11 @@ const AlbumPage: React.FC = () => {
         window.location.href = `/activity/foto/${album.AlbumID}`;
     };
 
-    const images = ['http://127.0.0.1:3001/images/file-1706934850506.jpg', 'http://127.0.0.1:3001/images/file-1706934864891.jpg', 'http://127.0.0.1:3001/images/file-1706934878638.jpg', 'http://127.0.0.1:3001/images/file-1706934886828.jpg'];
+    const images = [
+        'http://100.89.189.35:3001/images/file-1706934850506.jpg', 
+        'http://100.89.189.35:3001/images/file-1706934864891.jpg', 
+        'http://100.89.189.35:3001/images/file-1706934878638.jpg', 
+        'http://100.89.189.35:3001/images/file-1706934886828.jpg'];
 
     return (
         <>
