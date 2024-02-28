@@ -35,17 +35,16 @@ const LandingPage = () => {
                         <ul className="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer">
                             <li>
                                 <a href="#home" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                                    <span>Home</span>
+                                    {/* <span>Home</span> */}
                                     <Ripple />
                                 </a>
                             </li>
                             <li>
                                 <a href="#features" onClick={toggleMenuItemClick} className="p-ripple flex m-0 md:ml-5 px-0 py-3 text-900 font-medium line-height-3">
-                                    <span>Features</span>
+                                    {/* <span>Fitur App</span> */}
                                     <Ripple />
                                 </a>
                             </li>
-                            
                         </ul>
                         <div className="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
                             <a href="/auth/login">

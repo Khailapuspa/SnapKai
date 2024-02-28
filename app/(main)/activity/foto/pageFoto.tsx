@@ -100,6 +100,9 @@ const FotoPage = () => {
                 <div className="button-create">
                     <Button icon="pi pi-upload" rounded className="create-button" onClick={() => setDisplayBasic(true)}/>
                 </div>
+                <div className="button-del">
+                    <Button icon="pi pi-upload" rounded className="create-button" onClick={() => setDisplayBasic(true)}/>
+                </div>
                 <Dialog 
                     header="Album" visible={displayBasic} style={{ width: '30vw' }} modal footer={basicDialogFooter} 
                     onHide={() => setDisplayBasic(false)}>

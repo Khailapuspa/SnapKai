@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import { createFotoAsync } from '@/app/action/CFoto';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { deleteFotoAsync } from '@/app/action/DFoto';
+import { Image } from 'primereact/image';
 
 interface Album {
     AlbumID: number;
@@ -24,18 +26,15 @@ interface Foto {
 }
 
 function FotoPage({ params }: { params: { albumid: number } }) {
-  
     const dispatch = useAppDispatch();
     const [displayBasic, setDisplayBasic] = useState(false);
     const [valbum, setValbum] = useState<Album | null>(null);
     const [vfoto, setVphoto] = useState<Foto[] | undefined>(undefined);
+    const [selectedPhoto, setSelectedPhoto] = useState<Foto | null>(null);
 
     const [JUDULFOTO, setJUDULFOTO] = useState<string>('');
     const [DESKRIPSIFOTO, setDESKRIPSIFOTO] = useState<string>('');
-    const [ALBUMID, setALBUMID] = useState<number>(0);
-    const [USERID, setUSERID] = useState<number>(0);
     const [file, setFile] = useState<File | null>(null);
-    const [photos, setPhotos] = useState<Foto[]>([]);
 
     const fetchDataAlbum = async () => {
         try {
@@ -92,7 +91,7 @@ function FotoPage({ params }: { params: { albumid: number } }) {
                 formData.append('USERID', String(userID));
                 if (file) {
                     formData.append('file', file);
-                } // buat up si foto nya
+                }
 
                 dispatch(createFotoAsync(formData));
                 setDisplayBasic(false);
@@ -102,6 +101,17 @@ function FotoPage({ params }: { params: { albumid: number } }) {
             }
         } catch (error) {
             console.error('Error creating album:', error);
+        }
+    };
+
+    const Handledelete = async (photo: Foto) => {
+        try {
+            const deleteParams = { FOTOID: photo.Fotoid };
+            console.log('Delete Params:', deleteParams);
+
+            dispatch(deleteFotoAsync(deleteParams));
+        } catch (error) {
+            console.error('Error deleting photo:', error);
         }
     };
 
@@ -132,29 +142,36 @@ function FotoPage({ params }: { params: { albumid: number } }) {
                         </div>
                         <div className="field">
                             <label htmlFor="FILE">Foto</label>
-                            <Button><input type="file" id="LOKASIFILE" onChange={handleFileChange} /></Button>
+                            <Button>
+                                <input type="file" id="LOKASIFILE" onChange={handleFileChange} />
+                            </Button>
                         </div>
                     </div>
                 </Dialog>
 
-                {/* <h5>{params.albumid}</h5> */}
                 <div className="item-album-container">
-                {valbum && (
-                    <>
-                        <h2><b>{valbum.NamaAlbum}</b></h2>
-                        <p>{valbum.Deskripsi}</p>
-                        <h6>{valbum.TanggalDibuat && format(valbum.TanggalDibuat, 'yyyy-MM-dd')}</h6>
-                    </>
-                )}
+                    {valbum && (
+                        <>
+                            <h2>
+                                <b>{valbum.NamaAlbum}</b>
+                            </h2>
+                            <p>{valbum.Deskripsi}</p>
+                            <h6>{valbum.TanggalDibuat && format(valbum.TanggalDibuat, 'yyyy-MM-dd')}</h6>
+                        </>
+                    )}
                 </div>
 
                 <div className="item-foto-container">
                     {vfoto &&
                         vfoto.map((photo) => (
                             <div key={photo.Fotoid} className="item-foto">
-                                <img src={photo.LokasiFile} alt={photo.JudulFoto}/>
-                                <h6><b>{photo.JudulFoto}</b></h6>
+                                <Image src={photo.LokasiFile} alt={photo.JudulFoto} preview />
+                                <h6>
+                                    <b>{photo.JudulFoto}</b>
+                                </h6>
                                 <p>{photo.DeskripsiFoto}</p>
+                                {/* <Button icon="pi pi-trash" rounded className="delete-button" onClick={() => Handledelete(photo)}/> */}
+                                {/* <Button icon="pi pi-pencil" rounded className="update-button" onClick={() => Handledelete(photo)} style={{ marginLeft: '10px' }} /> */}
                             </div>
                         ))}
                 </div>

@@ -5,7 +5,15 @@
     padding: 15px;
     display: flex;
     justify-content: flex-end;
-    
+  }
+
+  .button-del {
+    position: sticky;
+    bottom: 40px;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: flex-start;
   }
 
   .photos-container {

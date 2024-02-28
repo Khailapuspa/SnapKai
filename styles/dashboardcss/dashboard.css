@@ -9,7 +9,7 @@
     position: relative;
 }
 
-.item-foto img {
+.item-foto image {
     height: 200px;
     max-width: 100%;
     border-radius: 10px;

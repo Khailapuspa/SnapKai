@@ -9,6 +9,7 @@ import { UnlikeAsync } from '../action/DLike';
 import { createKomentarAsync } from '../action/CKomentar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
+import { Image } from 'primereact/image';
 
 interface Foto {
     FotoID: number;

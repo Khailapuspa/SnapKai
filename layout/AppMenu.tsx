@@ -13,14 +13,14 @@ const AppMenu = () => {
 
     const model: AppMenuItem[] = [
         {
-            label: 'Home',
+            label: 'Beranda',
             items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
         },
         {
             label: 'Activities',
             items: [
                 { label: 'Album', icon: 'pi pi-fw pi-images', to: '/activity/album' },
-                { label: 'Like', icon: 'pi pi-fw pi-heart', to: '/activity/like' },
+                { label: 'Suka', icon: 'pi pi-fw pi-heart', to: '/activity/like' },
                 { label: 'Komentar', icon: 'pi pi-fw pi-comment', to: '/activity/komentar' },
                 // { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
                 // { label: 'Input', icon: 'pi pi-fw pi-check-square', to: '/uikit/input' },

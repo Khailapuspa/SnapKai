@@ -12,6 +12,7 @@ import { Navigate } from 'react-router-dom';
 import FotoPage from '@/app/(main)/activity/foto/[albumid]/page';
 import router from 'next/router';
 import { updateAlbumAsync } from '@/app/action/UAlbum';
+import { deleteAlbumAsync } from '@/app/action/Dalbum';
 
 interface Album {
     AlbumID: number;
@@ -25,10 +26,10 @@ interface CombinedImageCardProps {
     namaAlbum: string;
     deskripsiAlbum: string;
     tanggalAlbum: Date;
+    onDeleteClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const CombinedImageCard: React.FC<CombinedImageCardProps> = ({ images, namaAlbum, deskripsiAlbum, tanggalAlbum }) => {
-    // Periksa apakah tanggalAlbum tidak undefined sebelum mencoba memformat
+const CombinedImageCard: React.FC<CombinedImageCardProps> = ({ images, namaAlbum, deskripsiAlbum, tanggalAlbum, onDeleteClick }) => {
     const formattedDate = tanggalAlbum ? format(tanggalAlbum, 'dd/MM/yyyy') : '';
 
     return (
@@ -45,7 +46,8 @@ const CombinedImageCard: React.FC<CombinedImageCardProps> = ({ images, namaAlbum
                 <p>
                     <b>{deskripsiAlbum}</b>Tanggal: {formattedDate}
                 </p>
-                <Button icon="pi pi-pencil" className="button-edit"/>
+                {/* <Button icon="pi pi-pencil" className="button-edit"/> */}
+                <Button icon="pi pi-trash" className="button-edit" onClick={(e) => onDeleteClick(e)} />
             </div>
         </div>
     );
@@ -60,7 +62,7 @@ const AlbumPage: React.FC = () => {
     const [NAMAALBUM, setNAMAALBUM] = useState<string>('');
     const [DESKRIPSI, setDESKRIPSI] = useState<string>('');
 
-    const [updateAlbum, setUpdateAlbum] = useState({ NAMAALBUM: '', DESKRIPSI: ''});
+    const [updateAlbum, setUpdateAlbum] = useState({ NAMAALBUM: '', DESKRIPSI: '' });
 
     const fetchData = async () => {
         try {
@@ -100,12 +102,11 @@ const AlbumPage: React.FC = () => {
             const dataloginString = localStorage.getItem('datalogin');
             if (dataloginString) {
                 const datalogin = JSON.parse(dataloginString);
-                const userId = datalogin.id; // Ambil USERID dari local storage
+                const userId = datalogin.id; 
 
                 const response = await dispatch(createAlbumAsync({ NAMAALBUM, DESKRIPSI, USERID: userId }));
                 const newAlbum = response.payload.data;
 
-                // Perubahan di sini
                 setAlbums([...albums, { AlbumID: newAlbum.id, NamaAlbum: NAMAALBUM, Deskripsi: DESKRIPSI, TanggalDibuat: new Date() }]);
                 addSuccessMessage();
                 setDisplayBasic(false);
@@ -123,12 +124,11 @@ const AlbumPage: React.FC = () => {
             const dataloginString = localStorage.getItem('datalogin');
             if (dataloginString) {
                 const datalogin = JSON.parse(dataloginString);
-                const userId = datalogin.id; // Ambil USERID dari local storage
+                const userId = datalogin.id; 
 
                 const response = await dispatch(updateAlbumAsync({ NAMAALBUM, DESKRIPSI, USERID: userId }));
                 const newAlbum = response.payload.data;
 
-                // Perubahan di sini
                 setAlbums([...albums, { AlbumID: newAlbum.id, NamaAlbum: NAMAALBUM, Deskripsi: DESKRIPSI, TanggalDibuat: new Date() }]);
                 addSuccessMessage();
                 setDisplayBasic(false);
@@ -139,7 +139,45 @@ const AlbumPage: React.FC = () => {
             console.error('Error creating album:', error);
             addErrorMessage();
         }
-    }
+    };
+
+    const HandleDelete = async (AlbumID: number) => {
+        try {
+            const isConfirmed = window.confirm('Apakah Anda yakin ingin menghapus album ini?');
+
+            if (isConfirmed) {
+                const dataloginString = localStorage.getItem('datalogin');
+                if (dataloginString) {
+                    const datalogin = JSON.parse(dataloginString);
+                    const userId = datalogin.id;
+
+                    const response = await dispatch(deleteAlbumAsync({ ALBUMID: AlbumID }));
+
+                    if (response.payload && response.payload.success) {
+                        const updatedAlbums = albums.filter((album) => album.AlbumID !== AlbumID);
+                        setAlbums(updatedAlbums);
+                        addSuccessMessage();
+                    } else {
+                        console.error('Gagal menghapus album:', response.payload && response.payload.error);
+                        addErrorMessage();
+                    }
+                } else {
+                    console.error('Data login tidak ditemukan dalam local storage');
+                }
+            }
+        } catch (error) {
+            console.error('Error saat menghapus album:', error);
+            addErrorMessage();
+        }
+    };
+
+    const handleAlbumClick = (album: Album, isDeleteClicked: boolean = false) => {
+        if (isDeleteClicked) {
+            HandleDelete(album.AlbumID);
+        } else {
+            window.location.href = `/activity/foto/${album.AlbumID}`;
+        }
+    };
 
     const basicDialogFooter = <Button type="button" label="Simpan" onClick={Handlecreate} icon="pi pi-check" outlined />;
 
@@ -153,48 +191,53 @@ const AlbumPage: React.FC = () => {
     const renderAlbums = () => {
         return albums.map((album, index) => (
             <div key={album.AlbumID || index} className="clickable-album" onClick={() => handleAlbumClick(album)}>
-                <CombinedImageCard images={images} namaAlbum={album.NamaAlbum} deskripsiAlbum={album.Deskripsi} tanggalAlbum={album.TanggalDibuat} />
+                <CombinedImageCard images={images} namaAlbum={album.NamaAlbum} deskripsiAlbum={album.Deskripsi} tanggalAlbum={album.TanggalDibuat} 
+                onDeleteClick={(e) => {
+                    e.stopPropagation(); 
+                    handleAlbumClick(album, true);
+                }} />
             </div>
         ));
     };
 
-    const handleAlbumClick = (album: Album) => {
-        window.location.href = `/activity/foto/${album.AlbumID}`;
-    };
+    // const handleAlbumClick = (album: Album) => {
+    //     window.location.href = `/activity/foto/${album.AlbumID}`;
+    // };
 
     const images = [
-        'http://100.89.189.35:3001/images/file-1706934850506.jpg', 
-        'http://100.89.189.35:3001/images/file-1706934864891.jpg', 
-        'http://100.89.189.35:3001/images/file-1706934878638.jpg', 
-        'http://100.89.189.35:3001/images/file-1706934886828.jpg'];
+        'http://127.0.0.1:3001/images/file-1706934850506.jpg', 
+        'http://127.0.0.1:3001/images/file-1706934864891.jpg', 
+        'http://127.0.0.1:3001/images/file-1706934878638.jpg', 
+        'http://127.0.0.1:3001/images/file-1706934886828.jpg'
+    ];
 
     return (
         <>
             {/* <div className="card"> */}
-                <div className="card-album">
-                    {renderAlbums()}
+            <div className="card-album">
+                {renderAlbums()}
 
-                    <div className="button-create">
-                        <Button icon="pi pi-plus" rounded className="create-button" onClick={() => setDisplayBasic(true)} />
-                    </div>
-                    <Dialog header="Album" visible={displayBasic} style={{ width: '30vw' }} modal footer={basicDialogFooter} onHide={() => setDisplayBasic(false)}>
-                        <div className="card p-fluid">
-                            <div className="field">
-                                <label htmlFor="NAMAALBUM">Nama</label>
-                                <InputText id="NAMAALBUM" type="text" value={NAMAALBUM} onChange={(e) => setNAMAALBUM(e.target.value)} />
-                            </div>
-                            <div className="field">
-                                <label htmlFor="DESKRIPSI">Deskripsi</label>
-                                <InputText id="DESKRIPSI" type="text" value={DESKRIPSI} onChange={(e) => setDESKRIPSI(e.target.value)} />
-                            </div>
-                        </div>
-                    </Dialog>
+                <div className="button-create">
+                    <Button icon="pi pi-plus" rounded className="create-button" onClick={() => setDisplayBasic(true)} />
                 </div>
+
+                <Dialog header="Album" visible={displayBasic} style={{ width: '30vw' }} modal footer={basicDialogFooter} onHide={() => setDisplayBasic(false)}>
+                    <div className="card p-fluid">
+                        <div className="field">
+                            <label htmlFor="NAMAALBUM">Nama</label>
+                            <InputText id="NAMAALBUM" type="text" value={NAMAALBUM} onChange={(e) => setNAMAALBUM(e.target.value)} />
+                        </div>
+                        <div className="field">
+                            <label htmlFor="DESKRIPSI">Deskripsi</label>
+                            <InputText id="DESKRIPSI" type="text" value={DESKRIPSI} onChange={(e) => setDESKRIPSI(e.target.value)} />
+                        </div>
+                    </div>
+                </Dialog>
+
+            </div>
             {/* </div> */}
         </>
     );
 };
 
 export default AlbumPage;
-
-
